@@ -13,6 +13,10 @@ func main() {
 	mux.HandleFunc("/", Root)
 	mux.HandleFunc("/snippet", ShowSnippet)
 	mux.HandleFunc("/snippet/create", CreateSnippet)
+
+	fs := http.FileServer(http.Dir("./ui/static/"))
+	mux.Handle("/static/", http.StripPrefix("/static", fs))
+
 	if err := http.ListenAndServe("localhost:8080", mux); err != nil {
 		log.Fatalln(err)
 	}
@@ -44,9 +48,9 @@ func Root(wr http.ResponseWriter, r *http.Request) {
 		return
 	}
 	files := []string{
-		"./ui/html/home.page.tmpl",
-		"./ui/html/base.layout.tmpl",
-		"./ui/html/footer.partial.tmpl",
+		"./ui/html/home.page.html",
+		"./ui/html/base.layout.html",
+		"./ui/html/footer.partial.html",
 	}
 
 	tmpl, err := template.ParseFiles(files...)
