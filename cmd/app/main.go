@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"strconv"
@@ -42,5 +43,20 @@ func Root(wr http.ResponseWriter, r *http.Request) {
 		http.Error(wr, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	fmt.Fprintf(wr, "<h1>SnippetBox</h1>")
+	files := []string{
+		"./ui/html/home.page.tmpl",
+		"./ui/html/base.layout.tmpl",
+	}
+
+	tmpl, err := template.ParseFiles(files...)
+	if err != nil {
+		http.Error(wr, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	err = tmpl.Execute(wr, nil)
+	if err != nil {
+		http.Error(wr, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 }

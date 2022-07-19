@@ -1,21 +1,8 @@
-<!doctype html>
-<html  lang="er">
-    <head>
-        <meta charset="utf-8">
-        <title> Home Page  - SnippetBox</title>
-    </head>
-    <body>
-        <header>
-            <h1>
-                <a href="/">SnippetBox</a>
-            </h1>
-            <nav>
-                <a href="/">Home Page</a>
-            </nav>
-            <main>
-                <h2>Last Notes</h2>
-                <p>There nothing are here yet</p>
-            </main>
-        </header>
-    </body>
-</html>
+{{template "base" .}}
+
+{{define "title"}}Home Page{{end}}
+
+{{define "main"}}
+    <h2>Last Notes</h2>
+    <p>There's nothing here yet</p>
+{{end}}
