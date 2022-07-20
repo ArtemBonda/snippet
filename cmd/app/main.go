@@ -1,14 +1,20 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
+	"net"
 	"net/http"
 	"strconv"
 )
 
 func main() {
+	host := flag.String("host", "localhost", "usage <localhost>'")
+	port := flag.String("port", ":8080", "usage :<port>")
+	flag.Parse()
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", Root)
 	mux.HandleFunc("/snippet", ShowSnippet)
@@ -17,7 +23,10 @@ func main() {
 	fs := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
 
-	if err := http.ListenAndServe("localhost:8080", mux); err != nil {
+	addr := net.JoinHostPort(*host, *port)
+	log.Printf("Запуск сервера на %s:%s\n", *host, *port)
+	// go run cmd/app/main.go -port 9090
+	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatalln(err)
 	}
 }
