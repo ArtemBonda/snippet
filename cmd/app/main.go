@@ -6,15 +6,16 @@ import (
 	"net/http"
 
 	"github.com/ArtemBonda/snippet/config"
+	"github.com/ArtemBonda/snippet/internal/handlers"
 )
 
 func main() {
 	cfg := config.NewConfig()
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", Root)
-	mux.HandleFunc("/snippet", ShowSnippet)
-	mux.HandleFunc("/snippet/create", CreateSnippet)
+	mux.HandleFunc("/", handlers.Root)
+	mux.HandleFunc("/snippet", handlers.ShowSnippet)
+	mux.HandleFunc("/snippet/create", handlers.CreateSnippet)
 
 	fs := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
