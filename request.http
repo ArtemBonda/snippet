@@ -1,0 +1,19 @@
+# curl -i http://localhost:9000/snippet?id=123
+GET http://localhost:9000/snippet?id=123
+
+###
+
+# curl -i http://localhost:90000
+GET http://localhost:9000
+
+###
+
+POST http://localhost:9000/snippet/create
+Content-Type: application/json
+
+{
+  "id": "123"
+}
+
+###
+
