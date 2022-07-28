@@ -17,3 +17,5 @@ func NewConfig() *Config {
 	flag.Parse()
 	return cfg
 }
+
+// go run cmd/app/main.go  --port 8900
