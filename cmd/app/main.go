@@ -1,13 +1,13 @@
 package main
 
 import (
+	"github.com/ArtemBonda/snippet/internal/handlers"
 	"log"
 	"net"
 	"net/http"
 	"os"
 
 	"github.com/ArtemBonda/snippet/config"
-	"github.com/ArtemBonda/snippet/internal/handlers"
 )
 
 func main() {
@@ -15,11 +15,15 @@ func main() {
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app := &handlers.Application{
+		ErrorLog: errorLog,
+		InfoLog:  infoLog,
+	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", handlers.Root)
-	mux.HandleFunc("/snippet", handlers.ShowSnippet)
-	mux.HandleFunc("/snippet/create", handlers.CreateSnippet)
+	mux.HandleFunc("/", app.Root)
+	mux.HandleFunc("/snippet", app.ShowSnippet)
+	mux.HandleFunc("/snippet/create", app.CreateSnippet)
 
 	fs := http.FileServer(http.Dir("./ui/static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
