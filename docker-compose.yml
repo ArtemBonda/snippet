@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  snippetdb:
+    image: mysql:latest
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+      MYSQL_USER: app
+      MYSQL_PASSWORD: pass
