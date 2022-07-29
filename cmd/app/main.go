@@ -1,46 +1,35 @@
 package main
 
 import (
-	"fmt"
+	"github.com/ArtemBonda/snippet/internal/handlers"
 	"log"
+	"net"
 	"net/http"
-	"strconv"
+	"os"
+
+	"github.com/ArtemBonda/snippet/config"
 )
 
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", Root)
-	mux.HandleFunc("/snippet", ShowSnippet)
-	mux.HandleFunc("/snippet/create", CreateSnippet)
-	if err := http.ListenAndServe("localhost:8080", mux); err != nil {
-		log.Fatalln(err)
-	}
-}
+	cfg := config.NewConfig()
 
-//CreateSnippet хендлер для создания новой заметки
-func CreateSnippet(wr http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		wr.Header().Set("Allow", http.MethodPost)
-		http.Error(wr, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-		return
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app := &handlers.Application{
+		ErrorLog: errorLog,
+		InfoLog:  infoLog,
 	}
-	wr.Write([]byte("Create new notice..."))
-}
 
-//ShowSnippet вывод пользователю заметок
-func ShowSnippet(wr http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil {
-		http.Error(wr, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
+	addr := net.JoinHostPort(cfg.Host, cfg.Port)
+	server := &http.Server{
+		Addr:     addr,
+		ErrorLog: errorLog,
+		Handler:  app.Routes(),
 	}
-	fmt.Fprintf(wr, "Snippet id = %d", id)
-}
 
-func Root(wr http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		http.Error(wr, http.StatusText(http.StatusNotFound), http.StatusNotFound)
-		return
+	// go run cmd/app/main.go -port 9090
+	infoLog.Printf("Starting server on %s", addr)
+	if err := server.ListenAndServe(); err != nil {
+		errorLog.Fatalln(err)
 	}
-	fmt.Fprintf(wr, "<h1>SnippetBox</h1>")
 }
